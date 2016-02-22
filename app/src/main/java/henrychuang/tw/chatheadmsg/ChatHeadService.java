@@ -6,17 +6,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.IBinder;
+import android.os.*;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -24,6 +17,7 @@ import android.widget.TextView;
 
 public class ChatHeadService extends Service {			
 	private WindowManager windowManager;
+	private DisplayMetrics displayMetrics;
 	private RelativeLayout chatheadView, removeView;
 	private LinearLayout txtView, txt_linearlayout;
 	private ImageView chatheadImg, removeImg;
@@ -46,6 +40,8 @@ public class ChatHeadService extends Service {
 	private void handleStart(){
 		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
+		displayMetrics = new DisplayMetrics();
+
 		LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
 
 		removeView = (RelativeLayout)inflater.inflate(R.layout.remove, null);
@@ -66,13 +62,11 @@ public class ChatHeadService extends Service {
 		chatheadImg = (ImageView)chatheadView.findViewById(R.id.chathead_img);
 
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			windowManager.getDefaultDisplay().getSize(szWindow);
-		} else {
-			int w = windowManager.getDefaultDisplay().getWidth();
-			int h = windowManager.getDefaultDisplay().getHeight();
-			szWindow.set(w, h);
-		}
+		windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+		int w = displayMetrics.widthPixels;
+		int h = displayMetrics.heightPixels;
+		szWindow.set(w, h);
 
 		WindowManager.LayoutParams params = new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.WRAP_CONTENT,
@@ -216,7 +210,6 @@ public class ChatHeadService extends Service {
 							}
 						}
 
-
 						x_cord_Destination = x_init_margin + x_diff;
 						y_cord_Destination = y_init_margin + y_diff;
 
@@ -267,14 +260,6 @@ public class ChatHeadService extends Service {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
-		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            windowManager.getDefaultDisplay().getSize(szWindow);
-        } else {
-            int w = windowManager.getDefaultDisplay().getWidth();
-            int h = windowManager.getDefaultDisplay().getHeight();
-            szWindow.set(w, h);
-        }
 		
 		WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
 				
@@ -347,7 +332,7 @@ public class ChatHeadService extends Service {
 	        	WindowManager.LayoutParams mParams = (WindowManager.LayoutParams) chatheadView.getLayoutParams();
 	            public void onTick(long t) {
 	                long step = (500 - t)/5;
-	                mParams.x = szWindow.x + (int)(double)bounceValue(step,x) - chatheadView.getWidth();	                
+	                mParams.x = szWindow.x + (int)(double)bounceValue(step,x) - chatheadView.getWidth();
 	                windowManager.updateViewLayout(chatheadView, mParams);
 	            }
 	            public void onFinish() {
