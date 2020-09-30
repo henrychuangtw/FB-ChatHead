@@ -2,6 +2,7 @@ Android-ChatHead
 ===========
 
 ChatHead for Android app, like FB messenger.
+Bring that cool bubble-like feature into your smartphone
 
 <br/><br/>
 
